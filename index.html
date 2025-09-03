@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Texnikum Yo‘qlama</title>
-    <!-- Favicon olib tashlandi -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 
 <body class="bg-gray-100 min-h-screen flex">
 
@@ -22,4 +22,114 @@
     </div>
 
     <!-- Content -->
-    <div class="fle
+    <div class="flex-1 p-6">
+        <!-- Login Section -->
+        <div id="loginPage" class="max-w-sm mx-auto bg-white shadow-md p-6 rounded-xl">
+            <h2 class="text-xl font-bold mb-4 text-center">🔑 Kirish</h2>
+            <input type="text" id="username" placeholder="Login" class="w-full p-2 mb-3 border rounded">
+            <input type="password" id="password" placeholder="Parol" class="w-full p-2 mb-3 border rounded">
+            <button onclick="login()"
+                class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-800">Kirish</button>
+            <p id="error" class="text-red-500 mt-2 hidden">❌ Login yoki parol noto‘g‘ri!</p>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <h1 class="text-2xl font-bold mb-4">📋 Yo‘qlama Jadvali</h1>
+
+            <!-- Sana tanlash -->
+            <div class="mb-4">
+                <label class="block mb-1 font-semibold">📅 Sana tanlang:</label>
+                <input type="date" id="datePicker" class="p-2 border rounded" onchange="loadAttendance()">
+            </div>
+
+            <table class="w-full border">
+                <thead class="bg-blue-600 text-white">
+                    <tr>
+                        <th class="p-2 border">#</th>
+                        <th class="p-2 border">Ism Familiya</th>
+                        <th class="p-2 border">Holati</th>
+                    </tr>
+                </thead>
+                <tbody id="studentList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Admin login
+        const admin = { user: "admin", pass: "2324" };
+
+        function login() {
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            if (user === admin.user && pass === admin.pass) {
+                document.getElementById("loginPage").classList.add("hidden");
+                document.getElementById("dashboard").classList.remove("hidden");
+                document.getElementById("datePicker").valueAsDate = new Date(); // hozirgi sana
+                loadAttendance();
+            } else {
+                document.getElementById("error").classList.remove("hidden");
+            }
+        }
+
+        // Students list
+        const students = [
+          "Abdulajonov Mahdiy",
+            "Abdulayev Shuhrat",
+            "Asilbsekov Dovut",
+            "Azizov Ozot",
+            "Bobomurotov Laziz",
+            "Ergashov Aziz",
+            "Holdorov Orifjon",
+            "Husanboyev Oyatbek",
+            "Jamolov Tursunhoja",
+            "Kasimov Sardor",
+            "Mamadiyorov Diyor",
+            "Manmetov Qanotbek",
+            "Muhamadaliyev Abrorbek",
+            "Nasridinov Abrorbek",
+            "Otkirov Murod",
+            "Qayinboyev Jalolidin",
+            "Qarshibekov Kamol",
+            "Serikboyev Marat",
+            "Sharipov Hojakbar",
+            "Useinov Sardor",
+            "Vohobov Ozod",
+            "Ermekov Nurjan",
+            "Zulfuqorov Otabek"
+
+        ];
+
+        const studentList = document.getElementById("studentList");
+
+        // Yo‘qlama yuklash
+        function loadAttendance() {
+            const date = document.getElementById("datePicker").value;
+            studentList.innerHTML = "";
+            students.forEach((name, index) => {
+                const status = localStorage.getItem(date + "_" + index) || "";
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td class="border p-2">${index + 1}</td>
+          <td class="border p-2">${name} ${status}</td>
+          <td class="border p-2 text-center">
+            <button onclick="markAttendance(${index}, true)" class="bg-green-500 px-3 py-1 text-white rounded">Bor</button>
+            <button onclick="markAttendance(${index}, false)" class="bg-red-500 px-3 py-1 text-white rounded">Yo‘q</button>
+          </td>
+        `;
+                studentList.appendChild(row);
+            });
+        }
+
+        // Belgilash va saqlash
+        function markAttendance(id, present) {
+            const date = document.getElementById("datePicker").value;
+            const status = present ? "✅" : "❌";
+            localStorage.setItem(date + "_" + id, status);
+            loadAttendance();
+        }
+    </script>
+</body>
+
+</html>
